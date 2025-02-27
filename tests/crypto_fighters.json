@@ -1,0 +1,61 @@
+{
+	"team_name": "Crypto Fighters",
+	"players": [
+		{
+			"id": "a41d9870-e0b0-43cc-9317-f2837667cf3e",
+			"playerName": "ALICE SMITH",
+			"height": 157,
+			"weight": 60,
+			"jerseyNumber": 1
+		},
+		{
+			"id": "a41d9870-e0b0-43cc-9317-f2837667cf3l",
+			"playerName": "BOB JOHNSON",
+			"height": 190,
+			"weight": 77,
+			"jerseyNumber": 2
+		},
+		{
+			"id": "a41d9870-e0b0-43cc-9317-f2837667cf3f",
+			"playerName": "CAROL WILLIAMS",
+			"height": 160,
+			"weight": 62,
+			"jerseyNumber": 3
+		},
+		{
+			"id": "a41d9870-e0b0-43cc-9317-f2837667cf3g",
+			"playerName": "DAVE BROWN",
+			"height": 165,
+			"weight": 65,
+			"jerseyNumber": 4
+		},
+		{
+			"id": "a41d9870-e0b0-43cc-9317-f2837667cf3h",
+			"playerName": "EVE JONES",
+			"height": 170,
+			"weight": 70,
+			"jerseyNumber": 5
+		},
+		{
+			"id": "a41d9870-e0b0-43cc-9317-f2837667cf3i",
+			"playerName": "FRANK MILLER",
+			"height": 175,
+			"weight": 75,
+			"jerseyNumber": 6
+		},
+		{
+			"id": "a41d9870-e0b0-43cc-9317-f2837667cf3j",
+			"playerName": "GRACE DAVIS",
+			"height": 180,
+			"weight": 80,
+			"jerseyNumber": 7
+		},
+		{
+			"id": "a41d9870-e0b0-43cc-9317-f2837667cf3k",
+			"playerName": "HEIDI WILSON",
+			"height": 185,
+			"weight": 85,
+			"jerseyNumber": 8
+		}
+	]
+}
