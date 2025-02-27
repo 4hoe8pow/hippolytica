@@ -1,12 +1,14 @@
-import { useState, useMemo } from "react";
+import { CircleCheck, CircleOff } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
 import { useWatch } from "react-hook-form";
 import { useForm } from "react-hook-form";
 
 import {
-	type TeamSchemaType,
-	matchEventResolver,
+	type EntrySchemaType,
 	MatchEventDefaultValue,
 	type MatchEventSchemaType,
+	ResultCategory,
+	matchEventResolver,
 } from "~/components/schemas";
 import { Button } from "~/components/ui/button";
 import {
@@ -20,10 +22,10 @@ import {
 import { Checkbox } from "~/components/ui/checkbox";
 import {
 	Form,
+	FormControl,
 	FormField,
 	FormItem,
 	FormLabel,
-	FormControl,
 	FormMessage,
 } from "~/components/ui/form";
 import { Label } from "~/components/ui/label";
@@ -36,37 +38,57 @@ import {
 } from "~/components/ui/select";
 import { Switch } from "~/components/ui/switch";
 
+export type RaidFormProps = {
+	eventNumber: number;
+	parsedData: EntrySchemaType | null;
+	handleCommit: (data: MatchEventSchemaType) => void;
+};
+
 export default function RaidForm({
 	eventNumber,
-	eventIndex,
 	parsedData,
 	handleCommit,
-}: {
-	eventNumber: number;
-	eventIndex: number;
-	parsedData: TeamSchemaType | null;
-	handleCommit: (data: MatchEventSchemaType, index: number) => void;
-}) {
+}: RaidFormProps) {
 	const form = useForm<MatchEventSchemaType>({
 		resolver: matchEventResolver,
 		defaultValues: MatchEventDefaultValue,
 	});
 
-	const [defenders, setDefenders] = useState<string[]>([]);
+	const [defenders, setDefenders] = useState<
+		{ id: string; playerName: string }[]
+	>([]); // id と playerName を含む形式に変更
 	const [hasBonusPoints, setHasBonusPoints] = useState(false);
-	const handleRaiderSelect = (value: string) => {
-		if (parsedData) {
-			const team = parsedData.dog_players.some((player) => player.id === value)
+
+	const raiderId = useWatch({ control: form.control, name: "raiderId" });
+
+	useEffect(() => {
+		if (parsedData && raiderId) {
+			const team = parsedData.dog_players.some(
+				(player) => player.id === raiderId,
+			)
 				? "cat_players"
 				: "dog_players";
-			setDefenders(parsedData[team].map((player) => player.playerName));
+			setDefenders(
+				parsedData[team].map((player) => ({
+					id: player.id,
+					playerName: player.playerName,
+				})),
+			);
 		}
-		form.setValue("raiderId", value);
+	}, [raiderId, parsedData]);
+
+	const onSubmit = (
+		formData: Omit<MatchEventSchemaType, "id" | "gained" | "lost">,
+	) => {
+		const eventWithSystemData = {
+			...formData,
+			id: eventNumber,
+			gained: gainedPoints,
+			lost: lostPoints,
+		};
+		handleCommit(eventWithSystemData);
 	};
 
-	const onSubmit = (formData: MatchEventSchemaType) => {
-		handleCommit(formData, eventIndex);
-	};
 	const defenderIds = useWatch({ control: form.control, name: "defenderIds" });
 	const watchedHasBonusPoints = useWatch({
 		control: form.control,
@@ -82,12 +104,50 @@ export default function RaidForm({
 		return isSuccess ? 0 : 1;
 	}, [isSuccess]);
 
+	const availableResultCategories = useMemo(() => {
+		if (defenderIds.length > 0) {
+			return [ResultCategory.CLEAN_TOUCH, ResultCategory.ESCAPE];
+		}
+		if (defenderIds.length === 0 && isSuccess) {
+			return [ResultCategory.EMPTY];
+		}
+		return [
+			ResultCategory.TACKLE,
+			ResultCategory.COUNTER,
+			ResultCategory.CHAIN,
+			ResultCategory.ANKLE_CATCH,
+			ResultCategory.BACK_CATCH,
+		];
+	}, [defenderIds, isSuccess]);
+
+	useEffect(() => {
+		if (availableResultCategories.length === 1) {
+			form.setValue("resultCategory", availableResultCategories[0]);
+		} else {
+			form.resetField("resultCategory");
+		}
+	}, [availableResultCategories, form]);
+
+	useEffect(() => {
+		if (isSuccess) {
+			form.resetField("tackleBy");
+		}
+	}, [isSuccess, form]);
+
 	return (
 		<Card className="p-4">
 			<CardHeader>
-				<CardTitle>Raid #{eventNumber}</CardTitle>
+				<div className="flex justify-between items-center w-full">
+					<CardTitle>Raid #{eventNumber}</CardTitle>
+					{isSuccess ? (
+						<CircleCheck color="#6be109" />
+					) : (
+						<CircleOff color="#ff2e2e" />
+					)}
+				</div>
 				<CardDescription>Answer the questions below.</CardDescription>
 			</CardHeader>
+
 			<CardContent>
 				<Form {...form}>
 					<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
@@ -99,10 +159,7 @@ export default function RaidForm({
 								<FormItem>
 									<FormLabel>1. Who is the raider?</FormLabel>
 									<FormControl>
-										<Select
-											onValueChange={handleRaiderSelect}
-											value={field.value}
-										>
+										<Select onValueChange={field.onChange} value={field.value}>
 											<SelectTrigger className="w-[180px]">
 												<SelectValue placeholder="Raider" />
 											</SelectTrigger>
@@ -156,17 +213,19 @@ export default function RaidForm({
 									<FormControl>
 										<div className="grid grid-cols-3 gap-4">
 											{defenders.map((defender) => (
-												<div key={defender} className="flex items-center">
+												<div key={defender.id} className="flex items-center">
 													<Checkbox
-														checked={field.value.includes(defender)}
+														checked={field.value.includes(defender.id)}
 														onCheckedChange={(checked) => {
 															const updatedDefenders = checked
-																? [...field.value, defender]
-																: field.value.filter((id) => id !== defender);
+																? [...field.value, defender.id]
+																: field.value.filter(
+																		(id) => id !== defender.id,
+																	);
 															field.onChange(updatedDefenders);
 														}}
 													/>
-													<span className="ml-2">{defender}</span>
+													<span className="ml-2">{defender.playerName}</span>
 												</div>
 											))}
 										</div>
@@ -181,7 +240,7 @@ export default function RaidForm({
 							name="hasBonusPoints"
 							render={({ field }) => (
 								<FormItem>
-									<FormLabel>4. Were there the bonus points?</FormLabel>
+									<FormLabel>4. Were there bonus points?</FormLabel>
 									<FormControl>
 										<div className="flex gap-4">
 											<Switch
@@ -196,6 +255,92 @@ export default function RaidForm({
 												{hasBonusPoints ? "Yes" : "No"}
 											</Label>
 										</div>
+									</FormControl>
+									<FormMessage />
+								</FormItem>
+							)}
+						/>
+						{/* 5. 決まり手 */}
+						<FormField
+							control={form.control}
+							name="resultCategory"
+							render={({ field }) => (
+								<FormItem>
+									<FormLabel>5. Result Category</FormLabel>
+									<FormControl>
+										<Select
+											value={field.value}
+											onValueChange={field.onChange}
+											disabled={availableResultCategories.length === 1}
+										>
+											<SelectTrigger className="w-[200px]">
+												<SelectValue placeholder="Select a category" />
+											</SelectTrigger>
+											<SelectContent>
+												{availableResultCategories.map((category) => (
+													<SelectItem key={category} value={category}>
+														{category}
+													</SelectItem>
+												))}
+											</SelectContent>
+										</Select>
+									</FormControl>
+									<FormMessage />
+								</FormItem>
+							)}
+						/>
+						{/* 6. タックラー */}
+						<FormField
+							control={form.control}
+							name="tackleBy"
+							render={({ field }) => (
+								<FormItem>
+									<FormLabel>6. Who tackled the raider?</FormLabel>
+									<FormControl>
+										<Select
+											value={field.value}
+											onValueChange={field.onChange}
+											disabled={isSuccess}
+										>
+											<SelectTrigger className="w-[180px]">
+												<SelectValue placeholder="Tackle by" />
+											</SelectTrigger>
+											<SelectContent>
+												{defenders.map((defender) => (
+													<SelectItem key={defender.id} value={defender.id}>
+														{defender.playerName}
+													</SelectItem>
+												))}
+											</SelectContent>
+										</Select>
+									</FormControl>
+									<FormMessage />
+								</FormItem>
+							)}
+						/>
+						{/* 7. レイド秒 */}
+						<FormField
+							control={form.control}
+							name="timeSpentInRaid"
+							render={({ field }) => (
+								<FormItem>
+									<FormLabel>7. Time spent in raid (seconds)</FormLabel>
+									<FormControl>
+										<Select
+											value={field.value?.toString()}
+											onValueChange={(value) => field.onChange(Number(value))}
+										>
+											<SelectTrigger className="w-[100px]">
+												<SelectValue placeholder="Time" />
+											</SelectTrigger>
+											<SelectContent>
+												{[...Array(30).keys()].map((i) => (
+													<SelectItem key={i + 1} value={(i + 1).toString()}>
+														{i + 1}
+													</SelectItem>
+												))}
+											</SelectContent>
+										</Select>
 									</FormControl>
 									<FormMessage />
 								</FormItem>

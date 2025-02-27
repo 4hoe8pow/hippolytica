@@ -8,20 +8,20 @@ import { useForm } from "react-hook-form";
 import AlertDialogComponent from "~/components/AlertDialogComponent";
 import Greeting from "~/components/Greeting";
 import {
-	teamResolver,
-	TeamDefaultValue,
-	type TeamSchemaType,
+	entryResolver,
+	EntryDefaultValue,
+	type EntrySchemaType,
 } from "~/components/schemas";
-import TeamForm from "~/components/TeamForm";
+import EntryForm from "@/app/components/EntryForm";
 import { Button } from "~/components/ui/button";
 import { Form } from "~/components/ui/form";
 
 export default function Home() {
 	const router = useRouter();
 	const [open, setOpen] = useState(false);
-	const form = useForm<TeamSchemaType>({
-		resolver: teamResolver,
-		defaultValues: TeamDefaultValue,
+	const form = useForm<EntrySchemaType>({
+		resolver: entryResolver,
+		defaultValues: EntryDefaultValue,
 	});
 
 	useEffect(() => {
@@ -31,7 +31,7 @@ export default function Home() {
 		}
 	}, [form]);
 
-	function onSubmit(values: TeamSchemaType) {
+	function onSubmit(values: EntrySchemaType) {
 		localStorage.setItem("formData", JSON.stringify(values));
 		router.push("/gazer");
 	}
@@ -43,7 +43,7 @@ export default function Home() {
 				<AlertDialogComponent open={open} setOpen={setOpen} />
 				<Form {...form}>
 					<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-						<TeamForm form={form} setOpen={setOpen} />
+						<EntryForm form={form} setOpen={setOpen} />
 						<div className="flex justify-center">
 							<Button type="submit">
 								Submit <ArrowRight />

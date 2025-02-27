@@ -53,7 +53,10 @@ const playerSchema = z.object({
 	),
 });
 
-const teamSchema = z.object({
+const entrySchema = z.object({
+	matchDate: z.date({
+		required_error: "Match date is required.",
+	}),
 	dog_team_name: z.string().min(2, {
 		message: "Team name must be at least 2 characters.",
 	}),
@@ -64,8 +67,8 @@ const teamSchema = z.object({
 	cat_players: z.array(playerSchema),
 });
 
-export type TeamSchemaType = z.infer<typeof teamSchema>;
-export const teamResolver = zodResolver(teamSchema);
+export type EntrySchemaType = z.infer<typeof entrySchema>;
+export const entryResolver = zodResolver(entrySchema);
 
 export const PlayerDefaultValue = {
 	id: uuidv4(),
@@ -77,27 +80,83 @@ export const PlayerDefaultValue = {
 
 export type PlayerSchemaType = z.infer<typeof playerSchema>;
 
-export const TeamDefaultValue = {
+export const EntryDefaultValue = {
+	matchDate: new Date(),
 	dog_team_name: "",
 	cat_team_name: "",
 	dog_players: [PlayerDefaultValue],
 	cat_players: [PlayerDefaultValue],
 };
 
-const matchEventSchema = z.object({
-	raiderId: z.string().uuid(),
-	isSuccess: z.boolean(),
-	defenderIds: z.array(z.string()),
-	hasBonusPoints: z.boolean(),
-});
+export enum ResultCategory {
+	CLEAN_TOUCH = "Clean-Touch",
+	ESCAPE = "Escape",
+	EMPTY = "Empty",
+	TACKLE = "Tackle",
+	COUNTER = "Counter",
+	CHAIN = "Chain",
+	ANKLE_CATCH = "Ankle-Catch",
+	BACK_CATCH = "Back-Catch",
+	BONUS_ONLY = "Bonus-Only",
+}
+
+export const matchEventSchema = z
+	.object({
+		raiderId: z.string().uuid("Raider is required"),
+		isSuccess: z.boolean(),
+		defenderIds: z.array(z.string()),
+		hasBonusPoints: z.boolean(),
+		resultCategory: z.nativeEnum(ResultCategory).optional(),
+		tackleBy: z.string().uuid().optional(),
+		timeSpentInRaid: z
+			.number()
+			.int()
+			.min(1)
+			.max(30, "Raid time must be between 1 and 30 seconds"),
+	})
+	.refine(
+		(data) => {
+			// isSuccess が false の場合は tackleBy が必須
+			if (!data.isSuccess && !data.tackleBy) {
+				return false;
+			}
+			return true;
+		},
+		{
+			message: "TackleBy is required when the raid is not successful",
+			path: ["tackleBy"],
+		},
+	)
+	.refine(
+		(data) => {
+			// isSuccess が true の場合は tackleBy が無いことを確認
+			if (data.isSuccess && data.tackleBy) {
+				return false;
+			}
+			return true;
+		},
+		{
+			message: "TackleBy must not be provided when the raid is successful",
+			path: ["tackleBy"],
+		},
+	);
 
 export const matchEventResolver = zodResolver(matchEventSchema);
 
-export const MatchEventDefaultValue = {
-	raiderId: undefined,
+export type MatchEventSchemaType = z.infer<typeof matchEventSchema>;
+
+export type MatchEventWithSystemData = MatchEventSchemaType & {
+	id: number;
+	gained: number;
+	lost: number;
+};
+
+export const MatchEventDefaultValue: MatchEventSchemaType = {
+	raiderId: "",
 	isSuccess: false,
 	defenderIds: [],
 	hasBonusPoints: false,
+	resultCategory: undefined,
+	tackleBy: undefined,
+	timeSpentInRaid: 0,
 };
-
-export type MatchEventSchemaType = z.infer<typeof matchEventSchema>;

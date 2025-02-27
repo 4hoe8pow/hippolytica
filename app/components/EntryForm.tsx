@@ -1,35 +1,36 @@
 import { Trash } from "lucide-react";
 import { useState } from "react";
-import { useFieldArray, type UseFormReturn } from "react-hook-form";
+import { type UseFormReturn, useFieldArray } from "react-hook-form";
 import { v4 as uuidv4 } from "uuid";
 import * as z from "zod";
 
 import { Button } from "~/components/ui/button";
 import {
+	FormControl,
 	FormField,
 	FormItem,
 	FormLabel,
-	FormControl,
 	FormMessage,
 } from "~/components/ui/form";
 import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
 import { Separator } from "~/components/ui/separator";
 import { Switch } from "~/components/ui/switch";
+import { DatePicker } from "./date-picker";
 
 import AddPlayerButton from "./AddPlayerButton";
 import {
+	type EntrySchemaType,
 	PlayerDefaultValue,
 	type PlayerSchemaType,
-	type TeamSchemaType,
 } from "./schemas";
 
-interface TeamFormProps {
-	form: UseFormReturn<TeamSchemaType>;
+interface EntryFormProps {
+	form: UseFormReturn<EntrySchemaType>;
 	setOpen: (open: boolean) => void;
 }
 
-const TeamForm = ({ form, setOpen }: TeamFormProps) => {
+const EntryForm = ({ form, setOpen }: EntryFormProps) => {
 	const [useExistingData, setUseExistingData] = useState({
 		dog: false,
 		cat: false,
@@ -202,6 +203,19 @@ const TeamForm = ({ form, setOpen }: TeamFormProps) => {
 
 	return (
 		<div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+			<FormField
+				control={form.control}
+				name="matchDate"
+				render={({ field }) => (
+					<FormItem className="col-span-2">
+						<FormLabel>Match Date</FormLabel>
+						<FormControl>
+							<DatePicker value={field.value} onSelect={field.onChange} />
+						</FormControl>
+						<FormMessage />
+					</FormItem>
+				)}
+			/>
 			{["Dog", "Cat"].map((team) => (
 				<div key={team}>
 					<div className="flex items-center space-x-2">
@@ -228,6 +242,7 @@ const TeamForm = ({ form, setOpen }: TeamFormProps) => {
 							Use existing team data
 						</Label>
 					</div>
+
 					<Separator className="my-4" />
 					<FormField
 						control={form.control}
@@ -246,6 +261,7 @@ const TeamForm = ({ form, setOpen }: TeamFormProps) => {
 							</FormItem>
 						)}
 					/>
+
 					<Separator className="my-4" />
 					{renderPlayerFields(
 						team === "Dog" ? dogFieldArray.fields : catFieldArray.fields,
@@ -269,4 +285,4 @@ const TeamForm = ({ form, setOpen }: TeamFormProps) => {
 	);
 };
 
-export default TeamForm;
+export default EntryForm;
