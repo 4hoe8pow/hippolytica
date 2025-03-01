@@ -4,9 +4,9 @@ import { useWatch } from "react-hook-form";
 import { useForm } from "react-hook-form";
 
 import {
-	type EntrySchemaType,
 	MatchEventDefaultValue,
 	type MatchEventSchemaType,
+	type PlayerSchemaType,
 	ResultCategory,
 	matchEventResolver,
 } from "~/components/schemas";
@@ -40,13 +40,17 @@ import { Switch } from "~/components/ui/switch";
 
 export type RaidFormProps = {
 	eventNumber: number;
-	parsedData: EntrySchemaType | null;
+	raiderCandidates: PlayerSchemaType[] | undefined;
+	defenderCandidates: PlayerSchemaType[] | undefined;
+	reviverCandidates: PlayerSchemaType[] | undefined;
 	handleCommit: (data: MatchEventSchemaType) => void;
 };
 
 export default function RaidForm({
 	eventNumber,
-	parsedData,
+	raiderCandidates,
+	defenderCandidates,
+	reviverCandidates,
 	handleCommit,
 }: RaidFormProps) {
 	const form = useForm<MatchEventSchemaType>({
@@ -54,28 +58,7 @@ export default function RaidForm({
 		defaultValues: MatchEventDefaultValue,
 	});
 
-	const [defenders, setDefenders] = useState<
-		{ id: string; playerName: string }[]
-	>([]); // id と playerName を含む形式に変更
 	const [hasBonusPoints, setHasBonusPoints] = useState(false);
-
-	const raiderId = useWatch({ control: form.control, name: "raiderId" });
-
-	useEffect(() => {
-		if (parsedData && raiderId) {
-			const team = parsedData.dog_players.some(
-				(player) => player.id === raiderId,
-			)
-				? "cat_players"
-				: "dog_players";
-			setDefenders(
-				parsedData[team].map((player) => ({
-					id: player.id,
-					playerName: player.playerName,
-				})),
-			);
-		}
-	}, [raiderId, parsedData]);
 
 	const onSubmit = (
 		formData: Omit<MatchEventSchemaType, "id" | "gained" | "lost">,
@@ -85,11 +68,26 @@ export default function RaidForm({
 			id: eventNumber,
 			gained: gainedPoints,
 			lost: lostPoints,
+			defeatedDefenders: formData.defeatedDefenderIds.map((defenderId) => {
+				const defender = defenderCandidates?.find(
+					(player) => player.id === defenderId,
+				);
+				return defender as PlayerSchemaType;
+			}),
+			revivedDefenders: formData.revivedDefenderIds.map((defenderId) => {
+				const defender = reviverCandidates?.find(
+					(player) => player.id === defenderId,
+				);
+				return defender as PlayerSchemaType;
+			}),
 		};
 		handleCommit(eventWithSystemData);
 	};
 
-	const defenderIds = useWatch({ control: form.control, name: "defenderIds" });
+	const defeatedDefenderIds = useWatch({
+		control: form.control,
+		name: "defeatedDefenderIds",
+	});
 	const watchedHasBonusPoints = useWatch({
 		control: form.control,
 		name: "hasBonusPoints",
@@ -97,18 +95,18 @@ export default function RaidForm({
 	const isSuccess = useWatch({ control: form.control, name: "isSuccess" });
 
 	const gainedPoints = useMemo(() => {
-		return defenderIds.length + (watchedHasBonusPoints ? 1 : 0);
-	}, [defenderIds, watchedHasBonusPoints]);
+		return defeatedDefenderIds.length + (watchedHasBonusPoints ? 1 : 0);
+	}, [defeatedDefenderIds, watchedHasBonusPoints]);
 
 	const lostPoints = useMemo(() => {
 		return isSuccess ? 0 : 1;
 	}, [isSuccess]);
 
 	const availableResultCategories = useMemo(() => {
-		if (defenderIds.length > 0) {
+		if (defeatedDefenderIds.length > 0) {
 			return [ResultCategory.CLEAN_TOUCH, ResultCategory.ESCAPE];
 		}
-		if (defenderIds.length === 0 && isSuccess) {
+		if (defeatedDefenderIds.length === 0 && isSuccess) {
 			return [ResultCategory.EMPTY];
 		}
 		return [
@@ -118,7 +116,7 @@ export default function RaidForm({
 			ResultCategory.ANKLE_CATCH,
 			ResultCategory.BACK_CATCH,
 		];
-	}, [defenderIds, isSuccess]);
+	}, [defeatedDefenderIds, isSuccess]);
 
 	useEffect(() => {
 		if (availableResultCategories.length === 1) {
@@ -164,13 +162,11 @@ export default function RaidForm({
 												<SelectValue placeholder="Raider" />
 											</SelectTrigger>
 											<SelectContent>
-												{parsedData?.dog_players
-													.concat(parsedData.cat_players)
-													.map((player) => (
-														<SelectItem key={player.id} value={player.id}>
-															{player.playerName}
-														</SelectItem>
-													))}
+												{raiderCandidates?.map((player) => (
+													<SelectItem key={player.id} value={player.id}>
+														{player.playerName}
+													</SelectItem>
+												))}
 											</SelectContent>
 										</Select>
 									</FormControl>
@@ -204,7 +200,7 @@ export default function RaidForm({
 						{/* 3. 倒したディフェンダー選択 */}
 						<FormField
 							control={form.control}
-							name="defenderIds"
+							name="defeatedDefenderIds"
 							render={({ field }) => (
 								<FormItem>
 									<FormLabel>
@@ -212,7 +208,7 @@ export default function RaidForm({
 									</FormLabel>
 									<FormControl>
 										<div className="grid grid-cols-3 gap-4">
-											{defenders.map((defender) => (
+											{defenderCandidates?.map((defender) => (
 												<div key={defender.id} className="flex items-center">
 													<Checkbox
 														checked={field.value.includes(defender.id)}
@@ -234,7 +230,38 @@ export default function RaidForm({
 								</FormItem>
 							)}
 						/>
-						{/* 4. ボーナスポイント */}
+						{/* 4. 　復活する味方ディフェンダー選択 */}
+						<FormField
+							control={form.control}
+							name="revivedDefenderIds"
+							render={({ field }) => (
+								<FormItem>
+									<FormLabel>4. Who are the revived defenders?</FormLabel>
+									<FormControl>
+										<div className="grid grid-cols-3 gap-4">
+											{reviverCandidates?.map((defender) => (
+												<div key={defender.id} className="flex items-center">
+													<Checkbox
+														checked={field.value.includes(defender.id)}
+														onCheckedChange={(checked) => {
+															const updatedDefenders = checked
+																? [...field.value, defender.id]
+																: field.value.filter(
+																		(id) => id !== defender.id,
+																	);
+															field.onChange(updatedDefenders);
+														}}
+													/>
+													<span className="ml-2">{defender.playerName}</span>
+												</div>
+											))}
+										</div>
+									</FormControl>
+									<FormMessage />
+								</FormItem>
+							)}
+						/>
+						{/* 5. ボーナスポイント */}
 						<FormField
 							control={form.control}
 							name="hasBonusPoints"
@@ -260,7 +287,7 @@ export default function RaidForm({
 								</FormItem>
 							)}
 						/>
-						{/* 5. 決まり手 */}
+						{/* 6. 決まり手 */}
 						<FormField
 							control={form.control}
 							name="resultCategory"
@@ -289,7 +316,7 @@ export default function RaidForm({
 								</FormItem>
 							)}
 						/>
-						{/* 6. タックラー */}
+						{/* 7. タックラー */}
 						<FormField
 							control={form.control}
 							name="tackleBy"
@@ -306,7 +333,7 @@ export default function RaidForm({
 												<SelectValue placeholder="Tackle by" />
 											</SelectTrigger>
 											<SelectContent>
-												{defenders.map((defender) => (
+												{defenderCandidates?.map((defender) => (
 													<SelectItem key={defender.id} value={defender.id}>
 														{defender.playerName}
 													</SelectItem>
@@ -318,7 +345,7 @@ export default function RaidForm({
 								</FormItem>
 							)}
 						/>
-						{/* 7. レイド秒 */}
+						{/* 8. レイド秒 */}
 						<FormField
 							control={form.control}
 							name="timeSpentInRaid"
@@ -346,7 +373,7 @@ export default function RaidForm({
 								</FormItem>
 							)}
 						/>
-						<Button type="submit">Commit</Button>
+						<Button type="submit">COMMIT</Button>
 					</form>
 				</Form>
 			</CardContent>

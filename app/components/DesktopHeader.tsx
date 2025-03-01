@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { NavigationLinks } from "~/components/NavigationLinks";
 import { ModeToggle } from "~/components/mode-toggle";
@@ -12,6 +13,12 @@ export default function DesktopHeader() {
 						className="flex items-center gap-2 font-bold"
 						prefetch={false}
 					>
+						<Image
+							src="/icon.svg"
+							alt="Hippolytica Logo"
+							width={32}
+							height={32}
+						/>
 						<span className="text-lg">Hippolytica</span>
 					</Link>
 					<nav className="space-y-1">

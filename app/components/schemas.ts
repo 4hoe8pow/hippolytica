@@ -2,6 +2,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { v4 as uuidv4 } from "uuid";
 import * as z from "zod";
 
+// Player Schema
 const playerNameSchema = z
 	.string()
 	.regex(/^[a-zA-Z\s]*$/, {
@@ -53,41 +54,46 @@ const playerSchema = z.object({
 	),
 });
 
-const entrySchema = z.object({
-	matchDate: z.date({
-		required_error: "Match date is required.",
-	}),
-	dog_team_name: z.string().min(2, {
-		message: "Team name must be at least 2 characters.",
-	}),
-	cat_team_name: z.string().min(2, {
-		message: "Team name must be at least 2 characters.",
-	}),
-	dog_players: z.array(playerSchema),
-	cat_players: z.array(playerSchema),
-});
+export type PlayerSchemaType = z.infer<typeof playerSchema>;
 
-export type EntrySchemaType = z.infer<typeof entrySchema>;
-export const entryResolver = zodResolver(entrySchema);
-
-export const PlayerDefaultValue = {
-	id: uuidv4(),
+export const playerDefaultValue = {
+	id: "",
 	playerName: "",
 	height: 0,
 	weight: 0,
 	jerseyNumber: 0,
 };
 
-export type PlayerSchemaType = z.infer<typeof playerSchema>;
+// Entry Schema
+const entrySchema = z.object({
+	matchDate: z.preprocess(
+		(v) => new Date(v as string),
+		z.date({
+			required_error: "Match date is required.",
+		}),
+	),
+	dogTeamName: z.string().min(2, {
+		message: "Team name must be at least 2 characters.",
+	}),
+	catTeamName: z.string().min(2, {
+		message: "Team name must be at least 2 characters.",
+	}),
+	dogPlayers: z.array(playerSchema),
+	catPlayers: z.array(playerSchema),
+});
+
+export type EntrySchemaType = z.infer<typeof entrySchema>;
+export const entryResolver = zodResolver(entrySchema);
 
 export const EntryDefaultValue = {
 	matchDate: new Date(),
-	dog_team_name: "",
-	cat_team_name: "",
-	dog_players: [PlayerDefaultValue],
-	cat_players: [PlayerDefaultValue],
+	dogTeamName: "",
+	catTeamName: "",
+	dogPlayers: [playerDefaultValue],
+	catPlayers: [playerDefaultValue],
 };
 
+// Match Event Schema
 export enum ResultCategory {
 	CLEAN_TOUCH = "Clean-Touch",
 	ESCAPE = "Escape",
@@ -104,7 +110,8 @@ export const matchEventSchema = z
 	.object({
 		raiderId: z.string().uuid("Raider is required"),
 		isSuccess: z.boolean(),
-		defenderIds: z.array(z.string()),
+		defeatedDefenderIds: z.array(z.string()),
+		revivedDefenderIds: z.array(z.string()),
 		hasBonusPoints: z.boolean(),
 		resultCategory: z.nativeEnum(ResultCategory).optional(),
 		tackleBy: z.string().uuid().optional(),
@@ -141,22 +148,36 @@ export const matchEventSchema = z
 		},
 	);
 
-export const matchEventResolver = zodResolver(matchEventSchema);
-
 export type MatchEventSchemaType = z.infer<typeof matchEventSchema>;
 
-export type MatchEventWithSystemData = MatchEventSchemaType & {
-	id: number;
-	gained: number;
-	lost: number;
-};
+export const matchEventResolver = zodResolver(matchEventSchema);
 
 export const MatchEventDefaultValue: MatchEventSchemaType = {
 	raiderId: "",
 	isSuccess: false,
-	defenderIds: [],
+	defeatedDefenderIds: [],
+	revivedDefenderIds: [],
 	hasBonusPoints: false,
 	resultCategory: undefined,
 	tackleBy: undefined,
 	timeSpentInRaid: 0,
+};
+
+export type MatchEventWithSystemData = MatchEventSchemaType & {
+	id: number;
+	raiderName: string;
+	raiderHeight: number;
+	raiderWeight: number;
+	raiderTeamName: string;
+	gained: number;
+	lost: number;
+	defeatedDefenders: PlayerSchemaType[];
+	revivedDefenders: PlayerSchemaType[];
+};
+
+export type MatchDataWithEvents = {
+	matchDate: Date;
+	dogTeamName: string;
+	catTeamName: string;
+	events: MatchEventWithSystemData[];
 };

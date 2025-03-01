@@ -10,6 +10,10 @@ const Greeting = () => {
 				be reproduced after clearing the cache. Please enjoy within the scope of
 				personal use.
 			</p>
+			<p className="mb-4">
+				Please note that the raiding team alternates each round. The team that
+				raids first is the dog team, followed by the cat team.
+			</p>
 		</div>
 	);
 };

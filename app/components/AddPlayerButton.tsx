@@ -1,31 +1,14 @@
 import { UserPlus } from "lucide-react";
 
 import { Button } from "~/components/ui/button";
+import type { PlayerSchemaType } from "./schemas";
 
 interface AddPlayerButtonProps {
 	handleAddPlayer: (
-		fields: {
-			id: string;
-			playerName: string;
-			height: number;
-			weight: number;
-			jerseyNumber: number;
-		}[],
-		append: (value: {
-			id: string;
-			playerName: string;
-			height: number;
-			weight: number;
-			jerseyNumber: number;
-		}) => void,
+		fields: PlayerSchemaType[],
+		append: (value: PlayerSchemaType) => void,
 	) => void;
-	fields: {
-		id: string;
-		playerName: string;
-		height: number;
-		weight: number;
-		jerseyNumber: number;
-	}[];
+	fields: PlayerSchemaType[];
 	append: () => void;
 }
 

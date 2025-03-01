@@ -56,7 +56,7 @@ export default function AboutHippolyticaPage() {
 	const lang = isEnglish ? TEXTS.english : TEXTS.japanese;
 
 	return (
-		<div className="prose mx-auto p-4 lg:p-8  text-center max-w-4xl border border-gray-300 rounded-lg shadow-lg bg-gray-100 dark:bg-gray-800 dark:border-gray-700">
+		<div className="prose mx-auto p-4 lg:p-8 text-center max-w-4xl border border-gray-300 rounded-lg shadow-lg bg-gray-100 dark:bg-gray-800 dark:border-gray-700">
 			<Earth ref={earthRef} onClick={toggleLanguage} />
 			<h1 className="text-lg py-6">{lang.title}</h1>
 			<ArticleSection title={lang.applicationValue}>
