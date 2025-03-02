@@ -40,17 +40,22 @@ import { Switch } from "~/components/ui/switch";
 
 export type RaidFormProps = {
 	eventNumber: number;
-	raiderCandidates: PlayerSchemaType[] | undefined;
-	defenderCandidates: PlayerSchemaType[] | undefined;
-	reviverCandidates: PlayerSchemaType[] | undefined;
-	handleCommit: (data: MatchEventSchemaType) => void;
+	raiderCandidates: PlayerSchemaType[];
+	defenderCandidates: PlayerSchemaType[];
+	dogReviverCandidates: PlayerSchemaType[];
+	catReviverCandidates: PlayerSchemaType[];
+	raiderTeam: "dog" | "cat";
+	// biome-ignore lint/suspicious/noExplicitAny: <explanation>
+	handleCommit: (formData: any) => void;
 };
 
 export default function RaidForm({
 	eventNumber,
 	raiderCandidates,
 	defenderCandidates,
-	reviverCandidates,
+	dogReviverCandidates,
+	catReviverCandidates,
+	raiderTeam,
 	handleCommit,
 }: RaidFormProps) {
 	const form = useForm<MatchEventSchemaType>({
@@ -59,6 +64,21 @@ export default function RaidForm({
 	});
 
 	const [hasBonusPoints, setHasBonusPoints] = useState(false);
+	const [isSuccess, setIsSuccess] = useState(false);
+	const [reviverCandidates, setReviverCandidates] =
+		useState<PlayerSchemaType[]>(dogReviverCandidates);
+
+	useEffect(() => {
+		if (isSuccess) {
+			setReviverCandidates(
+				raiderTeam === "dog" ? dogReviverCandidates : catReviverCandidates,
+			);
+		} else {
+			setReviverCandidates(
+				raiderTeam === "dog" ? catReviverCandidates : dogReviverCandidates,
+			);
+		}
+	}, [isSuccess, raiderTeam, dogReviverCandidates, catReviverCandidates]);
 
 	const onSubmit = (
 		formData: Omit<MatchEventSchemaType, "id" | "gained" | "lost">,
@@ -92,7 +112,6 @@ export default function RaidForm({
 		control: form.control,
 		name: "hasBonusPoints",
 	});
-	const isSuccess = useWatch({ control: form.control, name: "isSuccess" });
 
 	const gainedPoints = useMemo(() => {
 		return defeatedDefenderIds.length + (watchedHasBonusPoints ? 1 : 0);
@@ -186,7 +205,10 @@ export default function RaidForm({
 											<Switch
 												id="isRaidSuccessful"
 												checked={field.value}
-												onCheckedChange={field.onChange}
+												onCheckedChange={(checked) => {
+													field.onChange(checked);
+													setIsSuccess(checked);
+												}}
 											/>
 											<Label htmlFor="isRaidSuccessful">
 												{field.value ? "Success" : "Failure"}

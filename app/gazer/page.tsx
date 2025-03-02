@@ -32,72 +32,110 @@ const StatusBar = ({ parsedData, dogScore, catScore }: StatusBarProps) => (
 );
 
 export default function GazerPage() {
+	const router = useRouter();
 	const [parsedData, setParsedData] = useState<EntrySchemaType | null>(null);
+	const [confirmOpen, setConfirmOpen] = useState(false);
 	const [matchEvents, setMatchEvents] = useState<MatchEventWithSystemData[]>(
 		[],
 	);
 	const [dogScore, setDogScore] = useState(0);
 	const [catScore, setCatScore] = useState(0);
-	const router = useRouter();
-	const [confirmOpen, setConfirmOpen] = useState(false);
+	const raiderCandidatesList: PlayerSchemaType[][] = [[]];
+	const defenderCandidatesList: PlayerSchemaType[][] = [[]];
+
+	// 候補者リストの初期化：先攻はdog、後攻はcat
+	raiderCandidatesList[0] = parsedData?.dogPlayers ?? [];
+	defenderCandidatesList[0] = parsedData?.catPlayers ?? [];
 
 	const getUpdatedCandidates = (index: number, isDogTeamTurn: boolean) => {
-		let raiderCandidates: PlayerSchemaType[] = [];
-		let defenderCandidates: PlayerSchemaType[] = [];
-		let reviverCandidates: PlayerSchemaType[] = [];
+		let prevRaiderCandidates: PlayerSchemaType[] = [];
+		let prevDefenderCandidates: PlayerSchemaType[] = [];
+		let dogReviverCandidates: PlayerSchemaType[] = [];
+		let catReviverCandidates: PlayerSchemaType[] = [];
 
-		if (parsedData) {
-			// 初期候補
-			raiderCandidates = isDogTeamTurn
-				? parsedData.dogPlayers
-				: parsedData.catPlayers;
-			defenderCandidates = isDogTeamTurn
-				? parsedData.catPlayers
-				: parsedData.dogPlayers;
+		prevRaiderCandidates =
+			raiderCandidatesList[index - 1] || raiderCandidatesList[0];
+		prevDefenderCandidates =
+			defenderCandidatesList[index - 1] || defenderCandidatesList[0];
 
-			// 前回のイベント
-			if (index > 0) {
-				const prevEvent = matchEvents[index - 1];
-				raiderCandidates = raiderCandidates.filter(
-					(player) =>
-						!prevEvent.defeatedDefenders.some((d) => d.id === player.id),
-				);
-				if (prevEvent.revivedDefenders.length > 0) {
-					raiderCandidates = raiderCandidates.concat(
-						prevEvent.revivedDefenders,
-					);
-				}
-			}
+		// 攻守交代
+		const currentRaiderCandidates =
+			index === 0 ? prevRaiderCandidates : prevDefenderCandidates;
+		const currentDefenderCandidates =
+			index === 0 ? prevDefenderCandidates : prevRaiderCandidates;
 
-			// 前々回のイベント
-			if (index > 1) {
-				const prevPrevEvent = matchEvents[index - 2];
-				defenderCandidates = defenderCandidates.filter(
-					(player) =>
-						!prevPrevEvent.defeatedDefenders.some((d) => d.id === player.id),
-				);
-				if (!matchEvents[index - 1].isSuccess) {
-					defenderCandidates = defenderCandidates.filter(
-						(player) => player.id !== matchEvents[index - 1].raiderId,
-					);
-				}
-				if (matchEvents[index - 1].revivedDefenders.length > 0) {
-					defenderCandidates = defenderCandidates.concat(
-						matchEvents[index - 1].revivedDefenders,
-					);
-				}
-			}
+		if (index > 0) {
+			const prevEvent = matchEvents[index - 1];
+			const { defeatedDefenders, revivedDefenders, isSuccess, raiderId } =
+				prevEvent;
 
-			// reviverCandidatesの設定
-			reviverCandidates = isDogTeamTurn
-				? parsedData.dogPlayers
-				: parsedData.catPlayers;
-			reviverCandidates = reviverCandidates.filter(
-				(player) => !raiderCandidates.some((raider) => raider.id === player.id),
+			// currentRaiderCandidatesへ競技規則の反映
+			const updatedRaiderCandidates = currentRaiderCandidates.filter(
+				(player) =>
+					!defeatedDefenders.some((defender) => defender.id === player.id),
 			);
+			for (const reviver of revivedDefenders) {
+				if (
+					!updatedRaiderCandidates.some((player) => player.id === reviver.id)
+				) {
+					updatedRaiderCandidates.push({ ...reviver });
+				}
+			}
+
+			// currentDefenderCandidatesへ競技規則の反映
+			let updatedDefenderCandidates = currentDefenderCandidates;
+			if (!isSuccess) {
+				updatedDefenderCandidates = currentDefenderCandidates.filter(
+					(player) => player.id !== raiderId,
+				);
+			} else {
+				for (const reviver of revivedDefenders) {
+					if (
+						!updatedDefenderCandidates.some(
+							(player) => player.id === reviver.id,
+						)
+					) {
+						updatedDefenderCandidates.push({ ...reviver });
+					}
+				}
+			}
+
+			raiderCandidatesList[index] = updatedRaiderCandidates;
+			defenderCandidatesList[index] = updatedDefenderCandidates;
+		} else {
+			raiderCandidatesList[index] = currentRaiderCandidates;
+			defenderCandidatesList[index] = currentDefenderCandidates;
 		}
 
-		return { raiderCandidates, defenderCandidates, reviverCandidates };
+		const filterCandidates = (
+			sourceList: PlayerSchemaType[],
+			targetList: PlayerSchemaType[],
+		) =>
+			sourceList.filter(
+				(player) =>
+					!targetList.some((currentPlayer) => currentPlayer.id === player.id),
+			);
+
+		dogReviverCandidates = filterCandidates(
+			raiderCandidatesList[0],
+			isDogTeamTurn
+				? raiderCandidatesList[index]
+				: defenderCandidatesList[index],
+		);
+
+		catReviverCandidates = filterCandidates(
+			defenderCandidatesList[0],
+			isDogTeamTurn
+				? defenderCandidatesList[index]
+				: raiderCandidatesList[index],
+		);
+
+		return {
+			raiderCandidates: raiderCandidatesList[index],
+			defenderCandidates: defenderCandidatesList[index],
+			dogReviverCandidates,
+			catReviverCandidates,
+		};
 	};
 
 	// レイド単位のデータを作成する処理
@@ -123,7 +161,12 @@ export default function GazerPage() {
 			return defender as PlayerSchemaType;
 		});
 
-		const revivedDefenders: PlayerSchemaType[] = []; // ここで適切なロジックを追加してください
+		const revivedDefenders = formData.revivedDefenderIds.map((reviverId) => {
+			const reviver = parsedData?.dogPlayers
+				.concat(parsedData.catPlayers)
+				.find((player) => player.id === reviverId);
+			return reviver as PlayerSchemaType;
+		});
 
 		const eventWithSystemData: MatchEventWithSystemData = {
 			...formData,
@@ -216,8 +259,12 @@ export default function GazerPage() {
 				{[...matchEvents, { id: matchEvents.length + 1 }].map(
 					(event, index) => {
 						const isDogTeamTurn = index % 2 === 0;
-						const { raiderCandidates, defenderCandidates, reviverCandidates } =
-							getUpdatedCandidates(index, isDogTeamTurn);
+						const {
+							raiderCandidates,
+							defenderCandidates,
+							dogReviverCandidates,
+							catReviverCandidates,
+						} = getUpdatedCandidates(index, isDogTeamTurn);
 
 						return (
 							<div key={event.id}>
@@ -225,7 +272,9 @@ export default function GazerPage() {
 									eventNumber={index + 1}
 									raiderCandidates={raiderCandidates}
 									defenderCandidates={defenderCandidates}
-									reviverCandidates={reviverCandidates}
+									dogReviverCandidates={dogReviverCandidates}
+									catReviverCandidates={catReviverCandidates}
+									raiderTeam={isDogTeamTurn ? "dog" : "cat"}
 									handleCommit={(formData) => handleCommit(formData, index)}
 								/>
 							</div>
