@@ -1,0 +1,53 @@
+{
+	"teamName": "Crypto Errors",
+	"players": [
+		{
+			"playerName": "ALICE SMITH",
+			"height": 157,
+			"weight": 777770,
+			"jerseyNumber": 1
+		},
+		{
+			"id": "a41d9870-e0b0-43cc-9317-f2837667cf3l",
+			"playerName": "BOB JOHNSON",
+			"weight": 77,
+			"jerseyNumber": 2
+		},
+		{
+			"id": "a41d9870-e0b0-43cc-9317-f2837667cf3f"
+		},
+		{
+			"id": "a41d9870-e0b0-43cc-9317-f2837667cf3g",
+			"playerName": "D3AVE BROWN",
+			"height": 165443,
+			"weight": 65,
+			"jerseyNumber": 4
+		},
+		{
+			"id": "a41d9870-e0b0-43c4r34r34c-9317-f2837667cf3h",
+			"playerName": "EVE JO444NES",
+			"height": 170,
+			"weight": 70,
+			"jerseyNumber": -523
+		},
+		{
+			"height": 175,
+			"weight": 723425,
+			"jerseyNumber": 6
+		},
+		{
+			"id": "a41d9870-e0b0-43cc-9317-f2837667cf3j",
+			"playerName": "GRACE DAVIS",
+			"height": 180,
+			"weight": 80,
+			"jerseyNumber": 7
+		},
+		{
+			"id": "a41d9870-e0b0-43cc-9317-f2837667cf3k",
+			"playerName": "HEIDI WILSON",
+			"height": 185,
+			"weight": 85,
+			"jerseyNumber": 8
+		}
+	]
+}

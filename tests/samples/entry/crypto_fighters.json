@@ -1,0 +1,53 @@
+{
+	"teamName": "Crypto Fighters",
+	"players": [
+		{
+			"playerName": "ALICE SMITH",
+			"height": 157,
+			"weight": 60,
+			"jerseyNumber": 1
+		},
+		{
+			"playerName": "BOB JOHNSON",
+			"height": 190,
+			"weight": 77,
+			"jerseyNumber": 2
+		},
+		{
+			"playerName": "CAROL WILLIAMS",
+			"height": 160,
+			"weight": 62,
+			"jerseyNumber": 3
+		},
+		{
+			"playerName": "DAVE BROWN",
+			"height": 165,
+			"weight": 65,
+			"jerseyNumber": 4
+		},
+		{
+			"playerName": "EVE JONES",
+			"height": 170,
+			"weight": 70,
+			"jerseyNumber": 5
+		},
+		{
+			"playerName": "FRANK MILLER",
+			"height": 175,
+			"weight": 75,
+			"jerseyNumber": 6
+		},
+		{
+			"playerName": "GRACE DAVIS",
+			"height": 180,
+			"weight": 80,
+			"jerseyNumber": 7
+		},
+		{
+			"playerName": "HEIDI WILSON",
+			"height": 185,
+			"weight": 85,
+			"jerseyNumber": 8
+		}
+	]
+}

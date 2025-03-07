@@ -1,0 +1,55 @@
+{
+	"teamName": "広島 BIG DIPPER",
+	"players": [
+		{
+			"playerName": "TAKUYA SAKAUCHI",
+			"height": 177,
+			"weight": 67,
+			"jerseyNumber": 1
+		},
+		{
+			"playerName": "TAKESHI HIRANO",
+			"height": 164,
+			"weight": 73,
+			"jerseyNumber": 2
+		},
+		{
+			"playerName": "HIROKI MIYAHARA",
+			"height": 171,
+			"weight": 79,
+			"jerseyNumber": 3
+		},
+		{
+			"playerName": "YUKI ITO",
+			"height": 175,
+			"weight": 84,
+			"jerseyNumber": 4
+		},
+		{
+			"playerName": "SHOGEN KANBARA",
+			"height": 170,
+			"weight": 62,
+			"jerseyNumber": 5
+		},
+		{
+			"id": "b51d9870-e0b0-43cc-9317-f2837667cf3i",
+			"playerName": "TAKUYA HAMAGUCHI",
+			"height": 173,
+			"weight": 68,
+			"jerseyNumber": 6
+		},
+		{
+			"id": "b51d9870-e0b0-43cc-9317-f2837667cf3j",
+			"playerName": "SHINYA IWASAKI",
+			"height": 162,
+			"weight": 68,
+			"jerseyNumber": 7
+		},
+		{
+			"playerName": "YU TOKUNAGA",
+			"height": 177,
+			"weight": 83,
+			"jerseyNumber": 8
+		}
+	]
+}

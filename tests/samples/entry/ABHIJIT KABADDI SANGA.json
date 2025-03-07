@@ -1,0 +1,65 @@
+{
+	"teamName": "ABHIJIT KABADDI SANGA",
+	"players": [
+		{
+			"playerName": "Kaneko yuta",
+			"height": "167",
+			"weight": 80,
+			"jerseyNumber": "1"
+		},
+		{
+			"playerName": "gayan thameera",
+			"height": "174",
+			"weight": 80,
+			"jerseyNumber": "2"
+		},
+		{
+			"playerName": "natsuyoshi hiroki",
+			"height": 170,
+			"weight": 80,
+			"jerseyNumber": "3"
+		},
+		{
+			"playerName": "Ikeura Tomoya",
+			"height": "175",
+			"weight": 80,
+			"jerseyNumber": "4"
+		},
+		{
+			"playerName": "hurihata ryo",
+			"height": "174",
+			"weight": 80,
+			"jerseyNumber": "5"
+		},
+		{
+			"playerName": "suzuki shoya",
+			"height": "172",
+			"weight": 80,
+			"jerseyNumber": "6"
+		},
+		{
+			"playerName": "nitta terukazu",
+			"height": "174",
+			"weight": 80,
+			"jerseyNumber": "7"
+		},
+		{
+			"playerName": "ito koukei",
+			"height": "178",
+			"weight": 80,
+			"jerseyNumber": "8"
+		},
+		{
+			"playerName": "hamada tomohiro",
+			"height": "166",
+			"weight": 80,
+			"jerseyNumber": "9"
+		},
+		{
+			"playerName": "Fukuda shoya",
+			"height": "186",
+			"weight": 80,
+			"jerseyNumber": "10"
+		}
+	]
+}

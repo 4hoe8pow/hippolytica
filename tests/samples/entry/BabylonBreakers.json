@@ -1,0 +1,65 @@
+{
+	"teamName": "Babylon Breakers",
+	"players": [
+		{
+			"playerName": "Negoro masaki",
+			"height": "180",
+			"weight": 80,
+			"jerseyNumber": "1"
+		},
+		{
+			"playerName": "abe Tetsuro",
+			"height": "173",
+			"weight": 80,
+			"jerseyNumber": "3"
+		},
+		{
+			"playerName": "Yamaji satoshi",
+			"height": "174",
+			"weight": 80,
+			"jerseyNumber": "4"
+		},
+		{
+			"playerName": "chiba hiroto",
+			"height": "173",
+			"weight": 80,
+			"jerseyNumber": "6"
+		},
+		{
+			"playerName": "Osawa yuta",
+			"height": "176",
+			"weight": 80,
+			"jerseyNumber": "9"
+		},
+		{
+			"playerName": "Tomita naoki",
+			"height": "173",
+			"weight": 80,
+			"jerseyNumber": "28"
+		},
+		{
+			"playerName": "arai eisuke",
+			"height": "165",
+			"weight": 80,
+			"jerseyNumber": "55"
+		},
+		{
+			"playerName": "Terauchi yuichiro",
+			"height": "173",
+			"weight": 80,
+			"jerseyNumber": "0"
+		},
+		{
+			"playerName": "Yamakoshi Yasutaka",
+			"height": 170,
+			"weight": 80,
+			"jerseyNumber": "7"
+		},
+		{
+			"playerName": "Yamamori keito",
+			"height": "173",
+			"weight": 80,
+			"jerseyNumber": "11"
+		}
+	]
+}
