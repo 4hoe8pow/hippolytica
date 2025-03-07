@@ -57,3 +57,28 @@ export const mergeGainedPoints = (
 		return acc;
 	}, [] as ScoringDetailShareData[]);
 };
+
+export const createScoringSharePie = (
+	matchData: MatchEventWithSystemData[],
+): { name: string; gained: number; fill: string }[] => {
+	const colors = [
+		"#FF6384",
+		"#36A2EB",
+		"#FFCE56",
+		"#4BC0C0",
+		"#9966FF",
+		"#FF9F40",
+		"#FFCD56",
+		"#4BC0C0",
+		"#36A2EB",
+		"#FF6384",
+		"#9966FF",
+		"#FF9F40",
+	];
+
+	return mergeGainedPoints(matchData).map((player, index) => ({
+		name: player.playerName,
+		gained: player.raidPoint + player.defencePoint,
+		fill: colors[index % colors.length],
+	}));
+};

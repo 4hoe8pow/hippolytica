@@ -8,19 +8,19 @@ import { ScoringSharePie } from "./stats/ScoringSharePie";
 const MatchAnalytics = ({ data }: { data: MatchDataWithEvents }) => {
 	return (
 		<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-			<div className="col-span-1 rounded-md border flex justify-center items-center">
+			<div className="col-span-1 flex justify-center items-center">
 				<ScoringDetailShareBar data={data} />
 			</div>
-			<div className="col-span-1 rounded-md border max-h-96 overflow-auto flex justify-center items-center">
+			<div className="col-span-1 flex justify-center items-center">
 				<MatchTable data={data} />
 			</div>
-			<div className="rounded-md border max-h-96 flex justify-center items-center">
+			<div className="col-span-1 flex justify-center items-center">
 				<ScoringSharePie data={data} />
 			</div>
-			<div className="rounded-md border max-h-96 flex justify-center items-center">
+			<div className="rcol-span-1 flex justify-center items-center">
 				<DefenderTransitionLine data={data} />
 			</div>
-			<div className="rounded-md border max-h-96 flex justify-center items-center">
+			<div className="rcol-span-1 flex justify-center items-center">
 				<DefenderCountRadar data={data} />
 			</div>
 		</div>

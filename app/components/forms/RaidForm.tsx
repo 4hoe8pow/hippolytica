@@ -45,7 +45,11 @@ import {
 } from "~/components/ui/select";
 import { Separator } from "~/components/ui/separator";
 import { Switch } from "~/components/ui/switch";
-import { AccordionContent, AccordionItem, AccordionTrigger } from "~/components/ui/accordion";
+import {
+	AccordionContent,
+	AccordionItem,
+	AccordionTrigger,
+} from "~/components/ui/accordion";
 
 export type RaidFormProps = {
 	eventNumber: number;

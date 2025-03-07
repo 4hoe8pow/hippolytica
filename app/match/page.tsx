@@ -59,9 +59,7 @@ const MatchPage = () => {
 		<div className="mx-auto">
 			{matchData ? (
 				<div className="flex flex-col space-y-8 items-center">
-					<AspectRatio ratio={16 / 9}>
-						<MatchAnalytics data={matchData} />
-					</AspectRatio>
+					<MatchAnalytics data={matchData} />
 					<Button
 						onClick={handleResetCache}
 						className="w-1/4"
