@@ -1,10 +1,9 @@
 "use client";
 
-import { Trash } from "lucide-react";
+import MatchAnalytics from "@/app/components/MatchAnalytics";
+import { Download, Trash } from "lucide-react";
 import { useEffect, useState } from "react";
-import MatchAnalytics from "~/components/match-analytics";
 import type { MatchDataWithEvents } from "~/components/schemas";
-import { AspectRatio } from "~/components/ui/aspect-ratio";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
@@ -55,18 +54,40 @@ const MatchPage = () => {
 		setMatchData(null);
 	};
 
+	const handleRedownload = () => {
+		const storedMatchData = localStorage.getItem("matchDataWithEvents");
+		if (storedMatchData) {
+			const blob = new Blob([storedMatchData], { type: "application/json" });
+			const url = URL.createObjectURL(blob);
+			const a = document.createElement("a");
+			a.href = url;
+			a.download = "match-report.json";
+			a.click();
+			URL.revokeObjectURL(url);
+		}
+	};
+
 	return (
 		<div className="mx-auto">
 			{matchData ? (
 				<div className="flex flex-col space-y-8 items-center">
 					<MatchAnalytics data={matchData} />
-					<Button
-						onClick={handleResetCache}
-						className="w-1/4"
-						variant={"destructive"}
-					>
-						Delete <Trash />
-					</Button>
+					<div className="flex flex-row space-x-12 w-1/3 justify-between align-bottom">
+						<Button
+							onClick={handleRedownload}
+							className="w-1/3"
+							variant={"default"}
+						>
+							Redownload <Download />
+						</Button>
+						<Button
+							onClick={handleResetCache}
+							className="w-1/3"
+							variant={"destructive"}
+						>
+							Delete <Trash />
+						</Button>
+					</div>
 				</div>
 			) : (
 				<div className="flex flex-col items-center">

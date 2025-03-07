@@ -1,0 +1,53 @@
+{
+	"teamName": "百足",
+	"players": [
+		{
+			"playerName": "ABE TAKUMI",
+			"height": 170,
+			"weight": 80,
+			"jerseyNumber": 0
+		},
+		{
+			"playerName": "IZUMI AKIKAZU",
+			"height": "168",
+			"weight": 80,
+			"jerseyNumber": "1"
+		},
+		{
+			"playerName": "SHIMURA KOUTARO",
+			"height": 170,
+			"weight": 80,
+			"jerseyNumber": "2"
+		},
+		{
+			"playerName": "URAYAMA TAKAHIKO",
+			"height": "161",
+			"weight": 80,
+			"jerseyNumber": "4"
+		},
+		{
+			"playerName": "ABE KATSUMI",
+			"height": "177",
+			"weight": 80,
+			"jerseyNumber": "7"
+		},
+		{
+			"playerName": "MANITA HIROMU",
+			"height": 170,
+			"weight": 80,
+			"jerseyNumber": "9"
+		},
+		{
+			"playerName": "NISHIKORI RIICHI",
+			"height": "160",
+			"weight": 80,
+			"jerseyNumber": "22"
+		},
+		{
+			"playerName": "KAWADA KOUDAI",
+			"height": 170,
+			"weight": 80,
+			"jerseyNumber": "34"
+		}
+	]
+}

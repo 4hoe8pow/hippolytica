@@ -16,6 +16,11 @@ import {
 	ResultCategory,
 	matchEventResolver,
 } from "~/components/schemas";
+import {
+	AccordionContent,
+	AccordionItem,
+	AccordionTrigger,
+} from "~/components/ui/accordion";
 import { Badge } from "~/components/ui/badge";
 import { Button } from "~/components/ui/button";
 import {
@@ -45,17 +50,11 @@ import {
 } from "~/components/ui/select";
 import { Separator } from "~/components/ui/separator";
 import { Switch } from "~/components/ui/switch";
-import {
-	AccordionContent,
-	AccordionItem,
-	AccordionTrigger,
-} from "~/components/ui/accordion";
 
 export type RaidFormProps = {
 	eventNumber: number;
 	playerCandidates: PlayerEntity[];
 	setPlayerCandidates: Dispatch<SetStateAction<PlayerEntity[]>>;
-	isDogTeamTurn: boolean;
 	handleCommit: (
 		formData: MatchEventSchemaType,
 		gainedPoints: number,
@@ -67,7 +66,6 @@ export default function RaidForm({
 	eventNumber,
 	playerCandidates,
 	setPlayerCandidates,
-	isDogTeamTurn,
 	handleCommit,
 }: RaidFormProps) {
 	const form = useForm<MatchEventSchemaType>({
@@ -89,27 +87,21 @@ export default function RaidForm({
 			.map((p: PlayerClass) => p.player);
 	}, [playerCandidates, eventNumber]);
 
-	const dogReviverCandidates = useMemo(() => {
+	const raidReviverCandidates = useMemo(() => {
 		return playerCandidates[eventNumber]?.raidPlayers
-			.filter((p) => p.team === "dog" && p.status === "inactive")
+			.filter((p) => p.status === "inactive")
 			.map((p) => p.player);
 	}, [playerCandidates, eventNumber]);
 
-	const catReviverCandidates = useMemo(() => {
-		return playerCandidates[eventNumber]?.raidPlayers
-			.filter((p) => p.team === "cat" && p.status === "inactive")
+	const defenceReviverCandidates = useMemo(() => {
+		return playerCandidates[eventNumber]?.defencePlayers
+			.filter((p) => p.status === "inactive")
 			.map((p) => p.player);
 	}, [playerCandidates, eventNumber]);
 
 	const reviverCandidates = useMemo(() => {
-		return isSuccess
-			? isDogTeamTurn
-				? dogReviverCandidates
-				: catReviverCandidates
-			: isDogTeamTurn
-				? catReviverCandidates
-				: dogReviverCandidates;
-	}, [isSuccess, isDogTeamTurn, dogReviverCandidates, catReviverCandidates]);
+		return isSuccess ? raidReviverCandidates : defenceReviverCandidates;
+	}, [isSuccess, raidReviverCandidates, defenceReviverCandidates]);
 
 	const onSubmit = (formData: MatchEventSchemaType) => {
 		handleCommit(formData, gainedPoints, lostPoints);
@@ -167,6 +159,7 @@ export default function RaidForm({
 			ResultCategory.CHAIN,
 			ResultCategory.ANKLE_CATCH,
 			ResultCategory.BACK_CATCH,
+			ResultCategory.DIVE,
 		];
 	}, [defeatedDefenderIds, isSuccess]);
 
@@ -221,13 +214,13 @@ export default function RaidForm({
 	};
 
 	return (
-		<AccordionItem value={String(eventNumber)}>
+		<AccordionItem value={String(eventNumber)} data-value={String(eventNumber)}>
 			<Card className="p-4">
 				<AccordionTrigger>
-					<CardHeader>
+					<CardHeader className="w-full">
 						<div className="flex justify-between items-center w-full">
 							<CardTitle>Raid #{eventNumber + 1}</CardTitle>
-							<div className="flex items-center gap-2">
+							<div className="flex items-center gap-2 w-1/2 justify-end space-x-6">
 								<Badge
 									variant={isSuccess ? "default" : "destructive"}
 									className="text-md"

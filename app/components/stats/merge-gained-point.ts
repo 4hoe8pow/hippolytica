@@ -3,6 +3,7 @@ import type { MatchEventWithSystemData } from "~/components/schemas";
 type ScoringDetailShareData = {
 	playerName: string;
 	raidPoint: number;
+	bonusPoint: number;
 	defencePoint: number;
 };
 
@@ -12,7 +13,9 @@ export const mergeGainedPoints = (
 	const scoringData: ScoringDetailShareData[] = [];
 
 	for (const event of events) {
-		const raidPoint = event.gained + (event.hasBonusPoints ? 1 : 0);
+		console.log(event);
+		const raidPoint = event.hasBonusPoints ? event.gained - 1 : event.gained;
+		const bonusPoint = event.hasBonusPoints ? 1 : 0;
 		const defencePoint = event.lost;
 
 		const raider = scoringData.find(
@@ -20,10 +23,12 @@ export const mergeGainedPoints = (
 		);
 		if (raider) {
 			raider.raidPoint += raidPoint;
+			raider.bonusPoint += bonusPoint;
 		} else {
 			scoringData.push({
 				playerName: event.raiderName,
 				raidPoint,
+				bonusPoint,
 				defencePoint: 0,
 			});
 		}
@@ -37,6 +42,7 @@ export const mergeGainedPoints = (
 			} else {
 				scoringData.push({
 					playerName: event.tacklerName,
+					bonusPoint: 0,
 					raidPoint: 0,
 					defencePoint,
 				});
@@ -44,18 +50,26 @@ export const mergeGainedPoints = (
 		}
 	}
 
-	return scoringData.reduce((acc, curr) => {
-		const existingPlayer = acc.find(
-			(player) => player.playerName === curr.playerName,
+	return scoringData
+		.reduce((acc, curr) => {
+			const existingPlayer = acc.find(
+				(player) => player.playerName === curr.playerName,
+			);
+			if (existingPlayer) {
+				existingPlayer.raidPoint += curr.raidPoint;
+				existingPlayer.defencePoint += curr.defencePoint;
+				existingPlayer.bonusPoint += curr.bonusPoint;
+			} else {
+				acc.push(curr);
+			}
+			return acc;
+		}, [] as ScoringDetailShareData[])
+		.filter(
+			(player) =>
+				player.raidPoint !== 0 ||
+				player.defencePoint !== 0 ||
+				player.bonusPoint !== 0,
 		);
-		if (existingPlayer) {
-			existingPlayer.raidPoint += curr.raidPoint;
-			existingPlayer.defencePoint += curr.defencePoint;
-		} else {
-			acc.push(curr);
-		}
-		return acc;
-	}, [] as ScoringDetailShareData[]);
 };
 
 export const createScoringSharePie = (
@@ -78,7 +92,7 @@ export const createScoringSharePie = (
 
 	return mergeGainedPoints(matchData).map((player, index) => ({
 		name: player.playerName,
-		gained: player.raidPoint + player.defencePoint,
+		gained: player.raidPoint + player.defencePoint + player.bonusPoint,
 		fill: colors[index % colors.length],
 	}));
 };

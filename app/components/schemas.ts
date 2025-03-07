@@ -103,6 +103,7 @@ export enum ResultCategory {
 	ANKLE_CATCH = "Ankle-Catch",
 	BACK_CATCH = "Back-Catch",
 	BONUS_ONLY = "Bonus-Only",
+	DIVE = "Dive",
 }
 
 export const matchEventSchema = z
@@ -219,3 +220,21 @@ export const initPlayerEntity = (
 		status: index < 7 ? PlayerStatus.ACTIVE : PlayerStatus.RESERVED,
 	})),
 });
+
+export type ScoreDynamicsProps = {
+	alliesCount: number; // 味方の人数（1-7人）
+	opponentsCount: number; // 敵の人数（1-7人）
+	teamScore: number; // 現在の自チームスコア（0-∞点）
+	opponentScore: number; // 現在の敵チームスコア（0-∞点）
+	matchTime: number; // 試合時間経過（0-900秒）
+	isDoD: boolean; // Do or Dieレイドか
+	resultPoint: number; // 負の値をもつなら失点
+};
+
+export type RegressionResult = {
+	term: string;
+	estimate: number;
+	"std.error": number;
+	statistic: number;
+	"p.value": number;
+};

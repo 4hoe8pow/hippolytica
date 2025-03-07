@@ -152,14 +152,19 @@ describe("getUpdatedCandidates", () => {
 		raiderHeight: 0,
 		raiderWeight: 0,
 		raiderTeamName: "",
+		raiderJerseyNumber: 0,
 		gained: 0,
 		lost: 0,
 		defeatedDefenders: [],
 		revivedDefenders: [],
+		tacklerName: "",
+		tacklerHeight: 0,
+		tacklerWeight: 0,
+		tacklerJerseyNumber: 0,
 	});
 
 	it("1.should handle consecutive attack failures", () => {
-		updateCandidates(0, true, [], testPlayers);
+		updateCandidates(0, [], testPlayers);
 		// 攻撃失敗
 		const raid1 = [
 			createMatchEvent(
@@ -171,7 +176,7 @@ describe("getUpdatedCandidates", () => {
 			),
 		];
 
-		const candidates1 = updateCandidates(1, false, raid1, testPlayers);
+		const candidates1 = updateCandidates(1, raid1, testPlayers);
 		expect(candidates1[1].eventNumber).toEqual(1);
 		expect(candidates1[1].defencePlayers[0].status).toEqual("inactive");
 	});

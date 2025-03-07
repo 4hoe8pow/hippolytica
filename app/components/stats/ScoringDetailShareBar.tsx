@@ -30,12 +30,16 @@ export const ScoringDetailShareBar = ({
 			label: "Defence",
 			color: "#ef4444",
 		},
+		bonusPoint: {
+			label: "Bonus",
+			color: "#f59e0b",
+		},
 	} satisfies ChartConfig;
 
 	return (
 		<Card className="mx-auto aspect-auto size-full">
 			<CardHeader>
-				<CardTitle>得点構成傾向 - 詳細</CardTitle>
+				<CardTitle>得点構成 - 詳細</CardTitle>
 				<CardDescription>{teamName}</CardDescription>
 			</CardHeader>
 			<ChartContainer config={chartConfig}>
@@ -62,6 +66,13 @@ export const ScoringDetailShareBar = ({
 						name={"Raid"}
 						dataKey="raidPoint"
 						fill="var(--color-defencePoint)"
+						radius={4}
+						stackId="a"
+					/>
+					<Bar
+						name={"Bonus"}
+						dataKey="bonusPoint"
+						fill="var(--color-bonusPoint)"
 						radius={4}
 						stackId="a"
 					/>

@@ -7,7 +7,6 @@ import {
 
 export const updateCandidates = (
 	index: number,
-	isDogTeamTurn: boolean,
 	matchEvents: MatchEventWithSystemData[],
 	playerCandidates: PlayerEntity[],
 ): PlayerEntity[] => {
@@ -68,32 +67,25 @@ export const updateCandidates = (
 	}
 
 	// 全滅対応
-	if (updatedRaiderCandidates.length === 0) {
-		if (isDogTeamTurn) {
-			updatedRaiderCandidates = prevRaiderCandidates.map((player) => ({
-				...player,
-				status: PlayerStatus.ACTIVE,
-			}));
-		} else {
-			updatedRaiderCandidates = prevRaiderCandidates.map((player) => ({
-				...player,
-				status: PlayerStatus.ACTIVE,
-			}));
-		}
-	}
+	const revivePlayers = (players: PlayerClass[]) =>
+		players.map((player) =>
+			player.status === PlayerStatus.INACTIVE
+				? { ...player, status: PlayerStatus.ACTIVE }
+				: player,
+		);
 
-	if (updatedDefenderCandidates.length === 0) {
-		if (isDogTeamTurn) {
-			updatedDefenderCandidates = prevDefenderCandidates.map((player) => ({
-				...player,
-				status: PlayerStatus.ACTIVE,
-			}));
-		} else {
-			updatedDefenderCandidates = prevDefenderCandidates.map((player) => ({
-				...player,
-				status: PlayerStatus.ACTIVE,
-			}));
-		}
+	const activeRaiderCount = updatedRaiderCandidates.filter(
+		(player) => player.status === PlayerStatus.ACTIVE,
+	).length;
+	const activeDefenderCount = updatedDefenderCandidates.filter(
+		(player) => player.status === PlayerStatus.ACTIVE,
+	).length;
+
+	if (activeRaiderCount === 0) {
+		updatedRaiderCandidates = revivePlayers(prevDefenderCandidates);
+	}
+	if (activeDefenderCount === 0) {
+		updatedDefenderCandidates = revivePlayers(prevRaiderCandidates);
 	}
 
 	// 更新された攻撃側・防御側のリストを保存
@@ -109,14 +101,12 @@ export const updateCandidates = (
 
 export const getUpdatedCandidates = (
 	index: number,
-	isDogTeamTurn: boolean,
 	matchEvents: MatchEventWithSystemData[],
 	playerCandidates: PlayerEntity[],
 	setPlayerCandidates: (candidates: PlayerEntity[]) => void,
 ): void => {
 	const updatedCandidates = updateCandidates(
 		index,
-		isDogTeamTurn,
 		matchEvents,
 		playerCandidates,
 	);

@@ -1,0 +1,59 @@
+{
+	"teamName": "Buddha",
+	"players": [
+		{
+			"playerName": "SATO SUGURU",
+			"height": 170,
+			"weight": 80,
+			"jerseyNumber": "1"
+		},
+		{
+			"playerName": "UNAI TOMOHIRO",
+			"height": "175",
+			"weight": 80,
+			"jerseyNumber": "6"
+		},
+		{
+			"playerName": "KONO GARYO",
+			"height": 170,
+			"weight": 80,
+			"jerseyNumber": "9"
+		},
+		{
+			"playerName": "KASAI AKIRA",
+			"height": 170,
+			"weight": 80,
+			"jerseyNumber": "12"
+		},
+		{
+			"playerName": "HAYAKAWA YOSHIAKI",
+			"height": "175",
+			"weight": 80,
+			"jerseyNumber": "13"
+		},
+		{
+			"playerName": "HAYAKEYAMA MASAKI",
+			"height": "180",
+			"weight": 80,
+			"jerseyNumber": "14"
+		},
+		{
+			"playerName": "SHIMOKAWA MASAYUKI",
+			"height": 170,
+			"weight": 80,
+			"jerseyNumber": "15"
+		},
+		{
+			"playerName": "UCHIYAMA TOMOAKI",
+			"height": 170,
+			"weight": 80,
+			"jerseyNumber": "17"
+		},
+		{
+			"playerName": "ZAIZEN YUTO",
+			"height": "167",
+			"weight": 80,
+			"jerseyNumber": "28"
+		}
+	]
+}

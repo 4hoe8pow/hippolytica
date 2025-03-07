@@ -10,8 +10,6 @@ import {
 import {
 	type ChartConfig,
 	ChartContainer,
-	ChartLegend,
-	ChartLegendContent,
 	ChartTooltip,
 	ChartTooltipContent,
 } from "~/components/ui/chart";
@@ -69,7 +67,7 @@ export const ScoringSharePie = ({
 	return (
 		<Card className="mx-auto aspect-auto size-full">
 			<CardHeader>
-				<CardTitle>得点構成傾向 - 概要</CardTitle>
+				<CardTitle>得点構成 - 概要</CardTitle>
 				<CardDescription>{teamName}</CardDescription>
 			</CardHeader>
 			<ChartContainer config={chartConfig}>

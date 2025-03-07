@@ -21,8 +21,10 @@ export default function Home() {
 	const router = useRouter();
 	const [open, setOpen] = useState(false);
 	const [isEnglish, setIsEnglish] = useState(false);
-	const alertTitle = "Cannot Add Player";
-	const alertMessage = "You cannot add more than 13 players to a team.";
+	const [alertDialogText, setAlertDialogText] = useState({
+		title: "",
+		message: "",
+	});
 	const form = useForm<EntrySchemaType>({
 		mode: "onChange",
 		resolver: entryResolver,
@@ -61,12 +63,16 @@ export default function Home() {
 				<AlertDialogComponent
 					open={open}
 					setOpen={setOpen}
-					title={alertTitle}
-					message={alertMessage}
+					title={alertDialogText.title}
+					message={alertDialogText.message}
 				/>
 				<Form {...form}>
 					<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-						<EntryForm form={form} setOpen={setOpen} />
+						<EntryForm
+							form={form}
+							setOpen={setOpen}
+							setAlertDialogText={setAlertDialogText}
+						/>
 						<div className="flex justify-center">
 							<Button
 								type="submit"

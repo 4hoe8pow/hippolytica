@@ -22,9 +22,9 @@ export const MatchTable = ({ data }: { data: MatchDataWithEvents }) => {
 				<CardTitle>レイドサマリ</CardTitle>
 				<CardDescription>時系列順</CardDescription>
 			</CardHeader>
-			<CardContent>
+			<CardContent className="max-h-[81vh] relative overflow-auto">
 				<Table>
-					<TableHeader>
+					<TableHeader className="sticky top-0 bg-secondary">
 						<TableRow>
 							<TableHead className="w-[100px]">Seq.</TableHead>
 							<TableHead>Raider</TableHead>
@@ -34,7 +34,7 @@ export const MatchTable = ({ data }: { data: MatchDataWithEvents }) => {
 							<TableHead>Lost</TableHead>
 						</TableRow>
 					</TableHeader>
-					<TableBody className="max-h-96 overflow-auto">
+					<TableBody>
 						{data.events.map((event) => (
 							<TableRow key={event.id}>
 								<TableCell className="font-medium">{event.id}</TableCell>

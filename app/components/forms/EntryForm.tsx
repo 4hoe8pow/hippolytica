@@ -15,7 +15,7 @@ import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
 import { Separator } from "~/components/ui/separator";
 import { Switch } from "~/components/ui/switch";
-import { DatePicker } from "../date-picker";
+import { DatePicker } from "../DatePicker";
 
 import AddPlayerButton from "../AddPlayerButton";
 import {
@@ -27,9 +27,10 @@ import {
 interface EntryFormProps {
 	form: UseFormReturn<EntrySchemaType>;
 	setOpen: (open: boolean) => void;
+	setAlertDialogText: (text: { title: string; message: string }) => void;
 }
 
-const EntryForm = ({ form, setOpen }: EntryFormProps) => {
+const EntryForm = ({ form, setOpen, setAlertDialogText }: EntryFormProps) => {
 	const [useExistingData, setUseExistingData] = useState({
 		dog: false,
 		cat: false,
@@ -83,8 +84,12 @@ const EntryForm = ({ form, setOpen }: EntryFormProps) => {
 						shouldValidate: true,
 						shouldDirty: true,
 					});
-				} catch (error) {
-					console.error("Error parsing JSON:", error);
+				} catch (_) {
+					setAlertDialogText({
+						title: "File Upload Error",
+						message: "Please upload data containing team data.",
+					});
+					setOpen(true);
 				}
 			};
 			reader.readAsText(file);

@@ -19,20 +19,51 @@ export const trackDefenderCount = (
 ): TeamCountTransition[] => {
 	let currentDog = 7;
 	let currentCat = 7;
-	const transitions: TeamCountTransition[] = [];
+	const transitions: TeamCountTransition[] = [
+		{
+			id: 0,
+			dogCount: currentDog,
+			catCount: currentCat,
+		},
+	];
 
 	data.sort((a, b) => a.id - b.id);
 
 	for (const event of data) {
-		const teamType = Number(event.raiderId) % 2 === 0 ? "dog" : "cat";
+		const isTeamDog = Number(event.id) % 2 === 0;
+		const isSuccess = event.isSuccess;
 
-		currentDog -= teamType === "dog" ? event.defeatedDefenders.length : 0;
-		currentCat -= teamType === "cat" ? event.defeatedDefenders.length : 0;
-		currentDog += teamType === "dog" ? event.revivedDefenders.length : 0;
-		currentCat += teamType === "cat" ? event.revivedDefenders.length : 0;
+		currentDog = Math.min(
+			7,
+			Math.max(
+				0,
+				currentDog +
+					(isSuccess
+						? isTeamDog
+							? event.revivedDefenders.length
+							: -event.defeatedDefenders.length
+						: isTeamDog
+							? -1
+							: 1),
+			),
+		);
+		currentCat = Math.min(
+			7,
+			Math.max(
+				0,
+				currentCat +
+					(isSuccess
+						? isTeamDog
+							? -event.defeatedDefenders.length
+							: event.revivedDefenders.length
+						: isTeamDog
+							? 1
+							: -1),
+			),
+		);
 
 		transitions.push({
-			id: event.id,
+			id: event.id + 1,
 			dogCount: currentDog,
 			catCount: currentCat,
 		});
@@ -55,6 +86,9 @@ export const calculateDefenderTransition = (
 	];
 
 	for (const transition of trackDefenderCount(data)) {
+		if (transition.dogCount === 0 || transition.catCount === 0) {
+			continue;
+		}
 		transitions[transition.dogCount - 1].dog += 1;
 		transitions[transition.catCount - 1].cat += 1;
 	}
