@@ -4,20 +4,24 @@ import type { MatchDataWithEvents } from "~/components/schemas";
 import {
 	Card,
 	CardDescription,
-	CardFooter,
 	CardHeader,
 	CardTitle,
 } from "~/components/ui/card";
 import {
 	type ChartConfig,
 	ChartContainer,
+	ChartLegend,
+	ChartLegendContent,
 	ChartTooltip,
 	ChartTooltipContent,
 } from "~/components/ui/chart";
 import { createScoringSharePie } from "./merge-gained-point";
 
 /* 合計点を選手ごとに振る */
-export const ScoringSharePie = ({ data }: { data: MatchDataWithEvents }) => {
+export const ScoringSharePie = ({
+	data,
+	teamName,
+}: { data: MatchDataWithEvents; teamName: string }) => {
 	const chartData = createScoringSharePie(data.events);
 
 	const colors = [
@@ -65,8 +69,8 @@ export const ScoringSharePie = ({ data }: { data: MatchDataWithEvents }) => {
 	return (
 		<Card className="mx-auto aspect-auto size-full">
 			<CardHeader>
-				<CardTitle>Line Chart - Multiple</CardTitle>
-				<CardDescription>January - June 2024</CardDescription>
+				<CardTitle>得点構成傾向 - 概要</CardTitle>
+				<CardDescription>{teamName}</CardDescription>
 			</CardHeader>
 			<ChartContainer config={chartConfig}>
 				<PieChart>
@@ -74,10 +78,10 @@ export const ScoringSharePie = ({ data }: { data: MatchDataWithEvents }) => {
 						cursor={false}
 						content={<ChartTooltipContent hideLabel />}
 					/>
+
 					<Pie
 						data={chartData}
 						dataKey="gained"
-						nameKey="name"
 						innerRadius={60}
 						strokeWidth={5}
 					>
@@ -113,18 +117,6 @@ export const ScoringSharePie = ({ data }: { data: MatchDataWithEvents }) => {
 					</Pie>
 				</PieChart>
 			</ChartContainer>
-			<CardFooter>
-				<div className="flex w-full items-start gap-2 text-sm">
-					<div className="grid gap-2">
-						<div className="flex items-center gap-2 font-medium leading-none">
-							Trending up by 5.2% this month
-						</div>
-						<div className="flex items-center gap-2 leading-none text-muted-foreground">
-							Showing total visitors for the last 6 months
-						</div>
-					</div>
-				</div>
-			</CardFooter>
 		</Card>
 	);
 };

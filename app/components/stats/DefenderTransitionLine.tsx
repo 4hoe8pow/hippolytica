@@ -13,7 +13,6 @@ import {
 	CardTitle,
 	CardDescription,
 	CardContent,
-	CardFooter,
 } from "~/components/ui/card";
 
 export const DefenderTransitionLine = ({
@@ -31,8 +30,8 @@ export const DefenderTransitionLine = ({
 	return (
 		<Card className="mx-auto aspect-auto size-full">
 			<CardHeader>
-				<CardTitle>Line Chart - Multiple</CardTitle>
-				<CardDescription>January - June 2024</CardDescription>
+				<CardTitle>守備安定性</CardTitle>
+				<CardDescription>アンティ実施人数の推移</CardDescription>
 			</CardHeader>
 			<CardContent>
 				<ChartContainer config={chartConfig}>
@@ -73,18 +72,6 @@ export const DefenderTransitionLine = ({
 					</LineChart>
 				</ChartContainer>
 			</CardContent>
-			<CardFooter>
-				<div className="flex w-full items-start gap-2 text-sm">
-					<div className="grid gap-2">
-						<div className="flex items-center gap-2 font-medium leading-none">
-							Trending up by 5.2% this month
-						</div>
-						<div className="flex items-center gap-2 leading-none text-muted-foreground">
-							Showing total visitors for the last 6 months
-						</div>
-					</div>
-				</div>
-			</CardFooter>
 		</Card>
 	);
 };

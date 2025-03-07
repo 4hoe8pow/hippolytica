@@ -13,15 +13,14 @@ import {
 	CardTitle,
 	CardDescription,
 	CardContent,
-	CardFooter,
 } from "~/components/ui/card";
 
 export const MatchTable = ({ data }: { data: MatchDataWithEvents }) => {
 	return (
 		<Card className="mx-auto aspect-auto size-full">
 			<CardHeader>
-				<CardTitle>Line Chart - Multiple</CardTitle>
-				<CardDescription>January - June 2024</CardDescription>
+				<CardTitle>レイドサマリ</CardTitle>
+				<CardDescription>時系列順</CardDescription>
 			</CardHeader>
 			<CardContent>
 				<Table>
@@ -61,18 +60,6 @@ export const MatchTable = ({ data }: { data: MatchDataWithEvents }) => {
 					</TableBody>
 				</Table>
 			</CardContent>
-			<CardFooter>
-				<div className="flex w-full items-start gap-2 text-sm">
-					<div className="grid gap-2">
-						<div className="flex items-center gap-2 font-medium leading-none">
-							Trending up by 5.2% this month
-						</div>
-						<div className="flex items-center gap-2 leading-none text-muted-foreground">
-							Showing total visitors for the last 6 months
-						</div>
-					</div>
-				</div>
-			</CardFooter>
 		</Card>
 	);
 };

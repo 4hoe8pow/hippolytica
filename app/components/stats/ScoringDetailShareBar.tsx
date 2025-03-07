@@ -4,7 +4,6 @@ import { mergeGainedPoints } from "~/components/stats/merge-gained-point";
 import {
 	Card,
 	CardDescription,
-	CardFooter,
 	CardHeader,
 	CardTitle,
 } from "~/components/ui/card";
@@ -20,7 +19,8 @@ import {
 /* 横軸：選手、縦軸：レイドによる得点とディフェンスによる得点のスタック */
 export const ScoringDetailShareBar = ({
 	data,
-}: { data: MatchDataWithEvents }) => {
+	teamName,
+}: { data: MatchDataWithEvents; teamName: string }) => {
 	const chartConfig = {
 		raidPoint: {
 			label: "Raid",
@@ -35,8 +35,8 @@ export const ScoringDetailShareBar = ({
 	return (
 		<Card className="mx-auto aspect-auto size-full">
 			<CardHeader>
-				<CardTitle>Line Chart - Multiple</CardTitle>
-				<CardDescription>January - June 2024</CardDescription>
+				<CardTitle>得点構成傾向 - 詳細</CardTitle>
+				<CardDescription>{teamName}</CardDescription>
 			</CardHeader>
 			<ChartContainer config={chartConfig}>
 				<BarChart accessibilityLayer data={mergeGainedPoints(data.events)}>
@@ -67,18 +67,6 @@ export const ScoringDetailShareBar = ({
 					/>
 				</BarChart>
 			</ChartContainer>
-			<CardFooter>
-				<div className="flex w-full items-start gap-2 text-sm">
-					<div className="grid gap-2">
-						<div className="flex items-center gap-2 font-medium leading-none">
-							Trending up by 5.2% this month
-						</div>
-						<div className="flex items-center gap-2 leading-none text-muted-foreground">
-							Showing total visitors for the last 6 months
-						</div>
-					</div>
-				</div>
-			</CardFooter>
 		</Card>
 	);
 };
