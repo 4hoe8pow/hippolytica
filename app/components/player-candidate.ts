@@ -40,13 +40,21 @@ export const updateCandidates = (
 	const { defeatedDefenders, revivedDefenderIds, isSuccess, raiderId } =
 		prevEvent;
 
-	// 【攻撃側候補の更新】
+	// 【攻撃側候補の更新1】
 	// 前回の防御側の中で敗北したプレイヤーをinactiveに変更
 	let updatedRaiderCandidates: PlayerClass[] = currentRaiderCandidates.map(
 		(player) =>
 			defeatedDefenders.some((defender) => defender.id === player.player.id)
 				? { ...player, status: PlayerStatus.INACTIVE }
 				: player,
+	);
+
+	// 【攻撃側候補の更新2】
+	// 前回の復活したプレイヤーをactiveに変更
+	updatedRaiderCandidates = updatedRaiderCandidates.map((player) =>
+		revivedDefenderIds.some((revivedId) => revivedId === player.player.id)
+			? { ...player, status: PlayerStatus.ACTIVE }
+			: player,
 	);
 
 	// 【防御側候補の更新】
