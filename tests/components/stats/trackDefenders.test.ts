@@ -39,6 +39,5 @@ describe("trackDefenderCount", () => {
 		const result = calculateDefenderTransition(events);
 		expect(result[6]).toEqual({ number: "seven", dog: 5, cat: 2, fullMark: 7 });
 		expect(result[5]).toEqual({ number: "six", dog: 2, cat: 1, fullMark: 7 });
-		//expect(result[4]).toEqual({ number: "five", dog: 0, cat: 2, fullMark: 7 },);
 	});
 });

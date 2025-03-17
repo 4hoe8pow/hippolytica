@@ -10,38 +10,39 @@ const roundToThreeDecimal = (num: number) => {
 };
 
 export type MatchBasicStatsProps = {
-	// 得点関連
-	totalPoints: number; // 総得点(得点 + 敵の失点)
-	scoringRate: number; // 得点率 (成功レイド数 ÷ 総レイド数)
-	concedingRate: number; // 失点率 (被得点数 ÷ 相手の総レイド数)
+		// 得点関連
+		totalPoints: number; // 総得点(得点 + 敵の失点)
+		scoringRate: number; // 得点率 (成功レイド数 ÷ 総レイド数)
+		concedingRate: number; // 失点率 (被得点数 ÷ 相手の総レイド数)
 
-	// レイド関連
-	pointsPerRaid: number; // 平均得点/レイド (総得点 ÷ 総レイド数)
-	successfulRaidPercentage: number; // 成功レイド率
-	emptyRaidPercentage: number; // エンプティレイド率
-	doDSuccessRate: number; // DoDレイド成功率
+		// レイド関連
+		pointsPerRaid: number; // 平均得点/レイド (総得点 ÷ 総レイド数)
+		successfulRaidPercentage: number; // 成功レイド率
+		emptyRaidPercentage: number; // エンプティレイド率
+		doDSuccessRate: number; // DoDレイド成功率
 
-	// タックル関連
-	totalRaids: number; // 総レイド数
-	successfulRaids: number; // 成功レイド数
-	averagePointsConceded: number; // 平均被得点
-	tackleSuccessRate: number; // タックル成功率
-	superTackleSuccessRate: number; // スーパータックル成功率
+		// タックル関連
+		pointsPerDefence: number
+		totalRaids: number; // 総レイド数
+		successfulRaids: number; // 成功レイド数
+		averagePointsConceded: number; // 平均被得点
+		tackleSuccessRate: number; // タックル成功率
+		superTackleSuccessRate: number; // スーパータックル成功率
 
-	// その他
-	revivalRate: number; // リバイブ率 (復帰選手数 ÷ 総レイド数)
-	allOutOccurrences: number; // オールアウト発生数
+		// その他
+		revivalRate: number; // リバイブ率 (復帰選手数 ÷ 総レイド数)
+		allOutOccurrences: number; // オールアウト発生数
 
-	// 時系列関連
-	scoringAcceleration: number; // 得点の加速度 (得点増加率の変化 ÷ 時間)
-	leadChanges: number; // 逆転回数(勝つ方向に上回る)
-	scoreStandardDeviation: number; // スコア推移の標準偏差
+		// 時系列関連
+		scoringAcceleration: number; // 得点の加速度 (得点増加率の変化 ÷ 時間)
+		leadChanges: number; // 逆転回数(勝つ方向に上回る)
+		scoreStandardDeviation: number; // スコア推移の標準偏差
 
-	// 統合指標
-	offenseDefenseBalance: number; // 攻守バランス指数 (SRP − CR)
-	efficiencyIndex: number; // 効率指数 (得点 ÷ (レイド数 + タックル数))
-	clutchPerformanceIndex: number; // プレッシャー耐性指数 (DoD成功率 + オールアウト回避回数) ÷ (DoD試行回数 + オールアウト回数)
-};
+		// 統合指標
+		offenseDefenseBalance: number; // 攻守バランス指数 (SRP − CR)
+		efficiencyIndex: number; // 効率指数 (得点 ÷ (レイド数 + タックル数))
+		clutchPerformanceIndex: number; // プレッシャー耐性指数 (DoD成功率 + オールアウト回避回数) ÷ (DoD試行回数 + オールアウト回数)
+	};
 
 export function calculateMatchBasicStats(matchData: MatchDataWithEvents): {
 	dogTeamStats: MatchBasicStatsProps;
@@ -71,14 +72,14 @@ export function calculateMatchBasicStats(matchData: MatchDataWithEvents): {
 	const dogDoDFlags = markDoD(dogEvents);
 	const catDoDFlags = markDoD(catEvents);
 
-	const calculateTotalPoints = (
-		events: MatchEventWithSystemData[],
+	const calculateRaidPoints = (events: MatchEventWithSystemData[]): number => {
+		return events.reduce((sum, e) => sum + e.gained, 0);
+	};
+
+	const calculateDefencePoints = (
 		opponentEvents: MatchEventWithSystemData[],
 	): number => {
-		return (
-			events.reduce((sum, e) => sum + e.gained, 0) +
-			opponentEvents.reduce((sum, e) => sum + e.lost, 0)
-		);
+		return opponentEvents.reduce((sum, e) => sum + e.lost, 0);
 	};
 
 	const calculateTotalOpponentPoints = (
@@ -140,7 +141,9 @@ export function calculateMatchBasicStats(matchData: MatchDataWithEvents): {
 		opponentEvents: MatchEventWithSystemData[],
 		doDFlags: boolean[],
 	): MatchBasicStatsProps => {
-		const totalPoints = calculateTotalPoints(events, opponentEvents);
+		const raidPoints = calculateRaidPoints(events);
+		const defencePoints = calculateDefencePoints(opponentEvents);
+		const totalPoints = raidPoints + defencePoints;
 		const totalOpponentPoints = calculateTotalOpponentPoints(opponentEvents);
 		const totalRaids = events.length;
 		const totalDefenses = opponentEvents.length;
@@ -176,7 +179,10 @@ export function calculateMatchBasicStats(matchData: MatchDataWithEvents): {
 			),
 
 			pointsPerRaid: roundToThreeDecimal(
-				totalRaids > 0 ? totalPoints / totalRaids : 0,
+				totalRaids > 0 ? raidPoints / totalRaids : 0,
+			),
+			pointsPerDefence: roundToThreeDecimal(
+				totalDefenses > 0 ? defencePoints / totalDefenses : 0,
 			),
 			successfulRaidPercentage: roundToThreeDecimal(
 				totalRaids > 0 ? successfulRaids / totalRaids : 0,

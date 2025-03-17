@@ -212,6 +212,12 @@ export const TEXTS = {
 				startDate: "2025-03-04",
 				releaseDate: "-",
 			},
+			{
+				id: "33",
+				text: "レイダーがアウトになったときにアンティ側に一人復活しない不具合を解決",
+				startDate: "2025-03-10",
+				releaseDate: "2025-03-11",
+			},
 		],
 	},
 	english: {
@@ -426,6 +432,12 @@ export const TEXTS = {
 				text: "Adding the concept of first and second halves",
 				startDate: "Mar-04-2025",
 				releaseDate: "-",
+			},
+			{
+				id: "33",
+				text: "Fixed a bug where a player would not respawn on the Anti side when a Raider was eliminated",
+				startDate: "Mar-10-2025",
+				releaseDate: "Mar-11-2025",
 			},
 		],
 	},

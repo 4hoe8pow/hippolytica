@@ -1,4 +1,4 @@
-import type { MatchEventWithSystemData } from "@/app/components/schemas";
+import { ResultCategory, type MatchEventWithSystemData } from "@/app/components/schemas";
 
 export const createMatchEvent = (
 	id: number,
@@ -11,6 +11,7 @@ export const createMatchEvent = (
 	lost = 0,
 	hasBonusPoints = false,
 	tacklerName = "",
+	resultCategory = ResultCategory.EMPTY,
 ): MatchEventWithSystemData => ({
 	id,
 	raiderId,
@@ -18,13 +19,13 @@ export const createMatchEvent = (
 	defeatedDefenderIds,
 	revivedDefenderIds,
 	hasBonusPoints,
-	resultCategory: undefined,
+	resultCategory,
 	tackleBy: undefined,
 	timeSpentInRaid: 0,
 	raiderName,
 	raiderHeight: 0,
 	raiderWeight: 0,
-	raiderTeamName: "",
+	raiderTeamName: id % 2 === 0 ? "Dog Team" : "Cat Team",
 	gained,
 	lost,
 	defeatedDefenders: defeatedDefenderIds.map((id) => ({

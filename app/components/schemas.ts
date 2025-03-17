@@ -16,7 +16,7 @@ const playerNameSchema = z
 	.transform((v) => v.toUpperCase());
 
 const playerSchema = z.object({
-	id: z.string().uuid(),
+	id: z.string(),
 	playerName: playerNameSchema,
 	height: z.preprocess(
 		(v) => Number(v),

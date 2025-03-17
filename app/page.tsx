@@ -26,9 +26,10 @@ export default function Home() {
 		message: "",
 	});
 	const form = useForm<EntrySchemaType>({
-		mode: "onChange",
+		mode: "onBlur",
 		resolver: entryResolver,
 		defaultValues: EntryDefaultValue,
+		reValidateMode: "onChange",
 	});
 
 	useEffect(() => {
